@@ -51,6 +51,7 @@ env/
 *.pickle
 *.model
 *.joblib
+data/
 
 # Logs
 logs/
