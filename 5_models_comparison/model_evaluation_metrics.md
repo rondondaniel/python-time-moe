@@ -25,3 +25,8 @@ Lower values indicate better performance for all metrics:
 - MAE: Mean Absolute Error
 
 The evaluation was performed using different forecast horizons (1, 7, 30, and 60 days) to test the models' performance on short, medium, and long-term forecasting tasks.
+
+## Metrics selection justification
+The selection of Mean Squared Error (MSE), Root Mean Squared Error (RMSE), and Mean Absolute Error (MAE) as evaluation metrics for time series forecasting models is well-supported by both theoretical foundations and practical considerations in the field.  
+These metrics provide complementary insights: MAE measures average magnitude of errors without considering direction, RMSE emphasizes larger errors, and MSE is mathematically convenient for optimization.  
+The combination of these metrics offers a comprehensive assessment framework: MSE (and its square-root variant RMSE) penalizes large prediction errors more heavily, making them particularly valuable when large forecast deviations are especially problematic in business contexts, while MAE provides a more intuitive measurement in the original data units. 
