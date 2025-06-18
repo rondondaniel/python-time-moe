@@ -18,12 +18,12 @@ def read_data(data_path):
     return df
 
 def main():
-    data_path = "../data/data.csv"
+    data_path = "data/data.csv"
     
     df = read_data(data_path)
     
     print("\nPreprocessing data...")
-    splitter = TimeSeriesSplitter(train_ratio=0.7, val_ratio=0.15)
+    splitter = TimeSeriesSplitter(train_ratio=0.9, val_ratio=0.05)
     preprocessor = TimeSeriesPreprocessor(date_col='day')
     
     # Preprocess the data
@@ -40,10 +40,14 @@ def main():
         print(f"Validation set: {len(val_df)} samples")
         print(f"Test set: {len(test_df)} samples")
 
+        preprocessor.to_jsonl(train_df, 'data/train.jsonl')
+        
         # Split the data into context and evaluation sets
         context_df, evaluation_df = splitter.split_for_evaluation(processed_df)
         print(f"Context set: {len(context_df)} samples")
         print(f"Evaluation set: {len(evaluation_df)} samples")
+        
+        preprocessor.to_jsonl(context_df, 'data/train.jsonl')
         
         print("\nPreprocessing complete!")
         print("Note: For model training, load the processed data from 'data/train.csv', 'data/val.csv', 'data/test.csv'")

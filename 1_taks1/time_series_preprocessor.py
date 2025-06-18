@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import os
 
-
 class TimeSeriesPreprocessor:
     """Simplified preprocessor for time series data.
     
@@ -139,7 +138,7 @@ class TimeSeriesPreprocessor:
         np.save(f"{output_dir}/preprocessing_params.npy", params)
         print(f"Saved preprocessing parameters to {output_dir}/preprocessing_params.npy")
     
-    def _load_parameters(self, file_path='data/preprocessing_params.npy'):
+    def load_parameters(self, file_path='data/preprocessing_params.npy'):
         """Load preprocessing parameters from a file.
         
         Args:
@@ -151,5 +150,39 @@ class TimeSeriesPreprocessor:
         self.feature_stds = params['feature_stds']
         self.continuous_features = params['continuous_features']
         self.flag_features = params['flag_features']
+    
+    def to_jsonl(self, df, output_path, column='target'):
+        """Convert processed data to JSONL format for TimeMoE model training.
         
-        print(f"Loaded preprocessing parameters from {file_path}")
+        Args:
+            df (pd.DataFrame): Processed DataFrame containing the time series data.
+            output_path (str): Path to save the JSONL output file.
+            column (str): Column name to use for the sequence values (default: 'target').
+                     
+        Returns:
+            bool: True if conversion was successful, False otherwise.
+        """
+        import json
+        
+        if column not in df.columns:
+            print(f"Error: Column '{column}' not found in the DataFrame.")
+            return False
+        
+        # Make sure output directory exists
+        output_dir = os.path.dirname(output_path)
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
+            
+        try:
+            with open(output_path, 'w') as f:
+                # Create a single sequence from the target column
+                sequence = df[column].values.tolist()
+                f.write(json.dumps({"sequence": sequence}) + "\n")
+                print(f"Created sequence of length {len(sequence)}")
+                    
+            print(f"Successfully converted data to JSONL format and saved to {output_path}")
+            return True
+            
+        except Exception as e:
+            print(f"Error saving to JSONL: {e}")
+            return False
