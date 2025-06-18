@@ -22,7 +22,6 @@ if __name__ == "__main__":
 
     # Fine-tuned model evaluation
     print("\nFine-tuned model evaluation...")
-    # model_path_id = os.path.join(project_root, '2_task2', 'time_moe_fine_tuned')
     model_path_id = "rondondaniel/time-moe-webpubs-finetuned"
     evaluator.load_model(model_path_id)
     for horizon in horizons:

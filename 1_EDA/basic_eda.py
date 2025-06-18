@@ -38,7 +38,7 @@ df['day'] = pd.to_datetime(df['day'])
 df_indexed = df.set_index('day')
 
 # Create output directory for plots
-os.makedirs('0_task0/plots', exist_ok=True)
+os.makedirs('1_EDA/plots', exist_ok=True)
 
 #
 # 1. Basic Statistical Analysis
@@ -53,7 +53,7 @@ print(df.isnull().sum())
 print("\nBasic Statistics:")
 print(df.describe())
 
-df.describe().to_csv('0_task0/statistics_summary.csv')
+df.describe().to_csv('1_EDA/statistics_summary.csv')
 
 #
 # 2. Target Variable Analysis
@@ -97,7 +97,7 @@ ax2.plot(df['day'], df['published'], color=secondary_color)
 ax2.tick_params(axis='y', labelcolor=secondary_color)
 
 fig.tight_layout()
-plt.savefig('0_task0/plots/3_target_time_series.png')
+plt.savefig('1_EDA/plots/3_target_time_series.png')
 
 # Plot target by month (boxplot)
 plt.figure(figsize=(14, 7))
@@ -107,7 +107,7 @@ plt.xlabel('Month')
 plt.ylabel('Target')
 plt.grid(True, alpha=0.3)
 plt.tight_layout()
-plt.savefig('0_task0/plots/3_target_by_month_boxplot.png')
+plt.savefig('1_EDA/plots/3_target_by_month_boxplot.png')
 
 # Plot target by day of week
 plt.figure(figsize=(14, 7))
@@ -118,7 +118,7 @@ plt.xlabel('Day of Week')
 plt.ylabel('Target')
 plt.grid(True, alpha=0.3)
 plt.tight_layout()
-plt.savefig('0_task0/plots/3_target_by_dow_boxplot.png')
+plt.savefig('1_EDA/plots/3_target_by_dow_boxplot.png')
 
 #
 # 4. Histogram and Density Plot
@@ -130,7 +130,7 @@ plt.title('Distribution of Target Variable')
 plt.xlabel('Target')
 plt.ylabel('Frequency')
 plt.grid(True, alpha=0.3)
-plt.savefig('0_task0/plots/4_target_distribution.png')
+plt.savefig('1_EDA/plots/4_target_distribution.png')
 
 #
 # 5. Seasonal Decomposition
@@ -155,7 +155,7 @@ try:
     decomposition.resid.plot(ax=ax4)
     ax4.set_title('Residuals')
     plt.tight_layout()
-    plt.savefig('0_task0/plots/5_seasonal_decomposition_weekly.png')
+    plt.savefig('1_EDA/plots/5_seasonal_decomposition_weekly.png')
     
     # Try monthly seasonality if data spans multiple years
     years_span = df['day'].dt.year.max() - df['day'].dt.year.min()
@@ -173,7 +173,7 @@ try:
         decomposition_monthly.resid.plot(ax=ax4)
         ax4.set_title('Residuals')
         plt.tight_layout()
-        plt.savefig('0_task0/plots/5_seasonal_decomposition_monthly.png')
+        plt.savefig('1_EDA/plots/5_seasonal_decomposition_monthly.png')
         print("Created both weekly and monthly seasonal decomposition plots")
     else:
         print("Created weekly seasonal decomposition plot")
@@ -190,13 +190,13 @@ try:
     plt.figure(figsize=(14, 7))
     plot_acf(df_daily['target'].dropna(), lags=50, alpha=0.05, title='Autocorrelation Function')
     plt.grid(True, alpha=0.3)
-    plt.savefig('0_task0/plots/6_acf_plot.png')
+    plt.savefig('1_EDA/plots/6_acf_plot.png')
     
     # Plot PACF
     plt.figure(figsize=(14, 7))
     plot_pacf(df_daily['target'].dropna(), lags=50, alpha=0.05, title='Partial Autocorrelation Function')
     plt.grid(True, alpha=0.3)
-    plt.savefig('0_task0/plots/6_pacf_plot.png')
+    plt.savefig('1_EDA/plots/6_pacf_plot.png')
     print("Created ACF and PACF plots")
     
     # Run Augmented Dickey-Fuller test for stationarity
@@ -238,7 +238,7 @@ plt.figure(figsize=(12, 10))
 sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt='.2f', linewidths=0.5)
 plt.title('Feature Correlation Matrix (excluding flag variables)')
 plt.tight_layout()
-plt.savefig('0_task0/plots/7_correlation_matrix.png')
+plt.savefig('1_EDA/plots/7_correlation_matrix.png')
 
 #
 # 8. Target vs Features
@@ -252,7 +252,7 @@ plt.title('Target vs. Published')
 plt.xlabel('Published')
 plt.ylabel('Target')
 plt.grid(True, alpha=0.3)
-plt.savefig('0_task0/plots/8_target_vs_published.png')
+plt.savefig('1_EDA/plots/8_target_vs_published.png')
 
 # Target by is_holiday
 plt.figure(figsize=(14, 7))
@@ -261,7 +261,7 @@ plt.title('Target Distribution by Holiday Status')
 plt.xlabel('Is Holiday (1=Yes, 0=No)')
 plt.ylabel('Target')
 plt.grid(True, alpha=0.3)
-plt.savefig('0_task0/plots/8_target_by_holiday.png')
+plt.savefig('1_EDA/plots/8_target_by_holiday.png')
 
 #
 # 9. Published Feature Analysis
@@ -276,7 +276,7 @@ plt.xlabel('Date')
 plt.ylabel('Published')
 plt.grid(True, alpha=0.3)
 plt.tight_layout()
-plt.savefig('0_task0/plots/9_published_time_series.png')
+plt.savefig('1_EDA/plots/9_published_time_series.png')
 
 plt.figure(figsize=(14, 7))
 plt.plot(df['day'], df['is_holiday'], color='#2ca02c', linewidth=1)
@@ -285,7 +285,7 @@ plt.xlabel('Date')
 plt.ylabel('Holiday')
 plt.grid(True, alpha=0.3)
 plt.tight_layout()
-plt.savefig('0_task0/plots/9_holiday_time_series.png')
+plt.savefig('1_EDA/plots/9_holiday_time_series.png')
 
 #
 # 10. Time Series Features
@@ -304,7 +304,7 @@ plt.title('Target Distribution by Quarter')
 plt.xlabel('Quarter')
 plt.ylabel('Target')
 plt.grid(True, alpha=0.3)
-plt.savefig('0_task0/plots/10_target_by_quarter.png')
+plt.savefig('1_EDA/plots/10_target_by_quarter.png')
 
 # Moving statistics
 plt.figure(figsize=(14, 7))
@@ -318,7 +318,7 @@ plt.xlabel('Date')
 plt.ylabel('Value')
 plt.legend()
 plt.grid(True, alpha=0.3)
-plt.savefig('0_task0/plots/10_moving_statistics.png')
+plt.savefig('1_EDA/plots/10_moving_statistics.png')
 
 #
 # EDA ends
