@@ -107,8 +107,8 @@ class TimeMoeEvaluator:
         plt.legend()
         plt.grid(True, alpha=0.3)
 
-        os.makedirs('3_task3', exist_ok=True)
-        output_path = os.path.join('3_task3', f'forecast_plot_{model_name}_{prediction_length}_days.png')
+        os.makedirs('4_task4', exist_ok=True)
+        output_path = os.path.join('4_task4', f'forecast_plot_{model_name}_{prediction_length}_days.png')
         plt.savefig(output_path)
         print(f"\nPlot saved to {output_path}")
         plt.close()
@@ -147,39 +147,3 @@ class TimeMoeEvaluator:
         print(f"MAE:  {mae:.4f}")
 
         self._plot_results(original_actuals, original_predictions, prediction_length)
-
-if __name__ == "__main__":
-    """Main function to evaluate the time series forecasting model."""
-    horizons = [1, 7, 30, 60]
-    evaluator = TimeMoeEvaluator()
-    target_col = 'target'
-    
-    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-    params_path = os.path.join(project_root, 'data', 'preprocessing_params.npy')
-
-    # Zero-shot evaluation
-    print("\nZero-shot evaluation...")
-    model_path_id = "Maple728/TimeMoE-50M"
-    context_path = os.path.join(project_root, 'data', 'context_data.csv')
-    evaluation_path = os.path.join(project_root, 'data', 'evaluation_data.csv')
-    evaluator.load_model(model_path_id)
-    for horizon in horizons:
-        print(f"\nHorizon: {horizon} days")
-        evaluator.evaluate(context_path, evaluation_path, params_path, horizon, target_col)
-
-    # Fine-tuned model evaluation
-    print("\nFine-tuned model evaluation...")
-    model_path_id = os.path.join(project_root, '2_task2', 'model')
-    evaluator.load_model(model_path_id)
-    for horizon in horizons:
-        print(f"\nHorizon: {horizon} days")
-        evaluator.evaluate(context_path, evaluation_path, params_path, horizon, target_col)
-    
-
-
-
-
-
-
-
-
