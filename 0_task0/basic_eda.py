@@ -222,16 +222,21 @@ except Exception as e:
 print("\n==== 7. CORRELATION ANALYSIS ====\n")
 
 
+# Get numeric columns and exclude flag variables
 numeric_df = df.select_dtypes(include=[np.number])
 
-corr_matrix = numeric_df.corr()
-print("\nCorrelation Matrix:")
+# Exclude flag variables from correlation matrix
+flag_variables = ['is_holiday', 'published']
+numeric_df_no_flags = numeric_df.drop(columns=flag_variables, errors='ignore')
+
+corr_matrix = numeric_df_no_flags.corr()
+print("\nCorrelation Matrix (excluding flag variables):")
 print(corr_matrix)
 
 # Visualize correlation matrix
 plt.figure(figsize=(12, 10))
 sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt='.2f', linewidths=0.5)
-plt.title('Feature Correlation Matrix')
+plt.title('Feature Correlation Matrix (excluding flag variables)')
 plt.tight_layout()
 plt.savefig('0_task0/plots/7_correlation_matrix.png')
 
