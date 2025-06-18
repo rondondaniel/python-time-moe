@@ -7,7 +7,7 @@ from transformers import AutoModelForCausalLM
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 import sys
 # Add the directory containing time_series_preprocessor.py to the Python path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '1_taks1'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '2_preprocessing'))
 from time_series_preprocessor import TimeSeriesPreprocessor
 from time_series_forecaster import TimeSeriesForecaster
 
