@@ -76,4 +76,3 @@ class TimeSeriesForecaster:
             # Convert list to numpy array
             predictions = np.array(predictions)
             return predictions
-

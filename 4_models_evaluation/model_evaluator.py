@@ -7,7 +7,7 @@ from transformers import AutoModelForCausalLM
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 import sys
 # Add the directory containing time_series_preprocessor.py to the Python path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '1_taks1'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '2_preprocessing'))
 from time_series_preprocessor import TimeSeriesPreprocessor
 from time_series_forecaster import TimeSeriesForecaster
 
@@ -55,60 +55,76 @@ class TimeMoeEvaluator:
         """
         if not os.path.exists(context_data_path):
             raise FileNotFoundError(f"Error: {context_data_path} not found. Make sure to run preprocessing.py first.")
-
+        
         if not os.path.exists(evaluation_data_path):
             raise FileNotFoundError(f"Error: {evaluation_data_path} not found. Make sure to run preprocessing.py first.")
-
-        context_data = pd.read_csv(context_data_path)
-        evaluation_data = pd.read_csv(evaluation_data_path)
-
+        
+        try:
+            context_data = pd.read_csv(context_data_path)
+            evaluation_data = pd.read_csv(evaluation_data_path)
+        except Exception as e:
+            print(f"Error loading data: {e}")
+            return None, None
+        
         return context_data, evaluation_data
 
     def _metrics(self, evaluation_data, preprocessor, predictions, target_col, prediction_length):
-        """Calculate the metrics for the evaluation data.
+        """Calculate and plot metrics.
         
         Args:
             evaluation_data (pd.DataFrame): The evaluation data.
             preprocessor (TimeSeriesPreprocessor): The time series preprocessor.
-            predictions (np.ndarray): The predictions.
+            predictions (np.array): The model predictions.
             target_col (str): The target column.
             prediction_length (int): The prediction length.
-        
-        Returns:
-            tuple: (mse, rmse, mae, original_actuals, original_predictions)
         """
-        actuals = evaluation_data[target_col].values[:prediction_length]
-        mean = preprocessor.feature_means[target_col]
-        std = preprocessor.feature_stds[target_col]
-        original_predictions = predictions * std + mean
-        original_actuals = actuals * std + mean
-
+        print("\n\nCalculating metrics...")
+        
+        # Get actual values from evaluation data
+        actuals_normalized = evaluation_data[target_col].values[:prediction_length]
+        
+        # Denormalize to original scale
+        target_mean = preprocessor.feature_means[target_col]
+        target_std = preprocessor.feature_stds[target_col]
+        
+        # Denormalize predictions and actuals
+        original_predictions = predictions * target_std + target_mean
+        original_actuals = actuals_normalized * target_std + target_mean
+        
+        # Calculate metrics
         mse = mean_squared_error(original_actuals, original_predictions)
         rmse = np.sqrt(mse)
         mae = mean_absolute_error(original_actuals, original_predictions)
-
+        
         return mse, rmse, mae, original_actuals, original_predictions
 
-    def _plot_results(self, original_actuals, original_predictions, prediction_length):
-        """Plot the results of the evaluation.
+    def _plot_results(self, actuals, predictions, prediction_length):
+        """Plot the results.
         
         Args:
-            original_actuals (np.ndarray): The original actual values.
-            original_predictions (np.ndarray): The original predictions.
+            actuals (np.array): The actual values.
+            predictions (np.array): The predicted values.
             prediction_length (int): The prediction length.
         """
-        model_name = self.model_name.replace('/', '_')
+        print("\n\nPlotting results...")
+        
+        model_name = self.model_name.replace("/", "_") if self.model_name else "model"
+        
         plt.figure(figsize=(12, 6))
-        plt.plot(original_actuals, label='Actual', color='#1f77b4')
-        plt.plot(original_predictions, label='Forecast', color='#ff7f0e')
-        plt.title(f'{model_name} Time Series Forecast - {prediction_length} days')
-        plt.xlabel('Time Steps')
-        plt.ylabel('Value') 
+        plt.plot(actuals, label='Actual', marker='o')
+        plt.plot(predictions, label='Predicted', marker='x', linestyle='--')
+        plt.title(f'Time Series Forecast for {prediction_length} days using {model_name}')
+        plt.xlabel('Days')
+        plt.ylabel('Target Value')
         plt.legend()
-        plt.grid(True, alpha=0.3)
-
-        os.makedirs('4_task4', exist_ok=True)
-        output_path = os.path.join('4_task4', f'forecast_plot_{model_name}_{prediction_length}_days.png')
+        plt.grid(True)
+        plt.tight_layout()
+        
+        # Make sure the directory exists
+        os.makedirs('5_models_comparison', exist_ok=True)
+        
+        # Save the plot
+        output_path = os.path.join('5_models_comparison', f'forecast_plot_{model_name}_{prediction_length}_days.png')
         plt.savefig(output_path)
         print(f"\nPlot saved to {output_path}")
         plt.close()
