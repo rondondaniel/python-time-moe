@@ -23,7 +23,7 @@ def main():
     df = read_data(data_path)
     
     print("\nPreprocessing data...")
-    splitter = TimeSeriesSplitter(train_ratio=0.9, val_ratio=0.05)
+    splitter = TimeSeriesSplitter()
     preprocessor = TimeSeriesPreprocessor(date_col='day')
     
     # Preprocess the data
@@ -35,17 +35,17 @@ def main():
         print(f"Saved processed data to data/processed_data.csv")
 
         # Split the data into train, context for fine-tuning, and evaluation for fine-tuning sets
-        train_df, context_ft_df, evaluation_ft_df = splitter.split_for_training(processed_df)
+        train_df, context_ft_df, evaluation_ft_df = splitter.split_for_training(processed_df, train_ratio=0.7, context_ratio=0.25)
         print(f"Train set: {len(train_df)} samples")
-        print(f"Context for FT set: {len(context_ft_df)} samples")
-        print(f"Evaluation for FT set: {len(evaluation_ft_df)} samples")
+        print(f"Context to evaluate FT set: {len(context_ft_df)} samples")
+        print(f"Evaluation to evaluate FT set: {len(evaluation_ft_df)} samples")
 
         preprocessor.to_jsonl(train_df, 'data/train.jsonl')
         
         # Split the data into context and evaluation sets
-        context_df, evaluation_df = splitter.split_for_evaluation(processed_df)
-        print(f"Context for Zero-shot set: {len(context_df)} samples")
-        print(f"Evaluation for Zero-shot set: {len(evaluation_df)} samples")
+        context_df, evaluation_df = splitter.split_for_evaluation(processed_df, context_ratio=0.95)
+        print(f"Context to evaluate Zero-shot set: {len(context_df)} samples")
+        print(f"Evaluation to evaluate Zero-shot set: {len(evaluation_df)} samples")
         
         print("\nPreprocessing complete!")
         print("Note: For model Fine-Tuning load the processed data from 'data/train.jsonl', 'data/context_ft.csv', 'data/evaluation_ft.csv'")
