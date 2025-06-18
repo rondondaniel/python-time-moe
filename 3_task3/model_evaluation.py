@@ -9,7 +9,7 @@ import sys
 # Add the directory containing time_series_preprocessor.py to the Python path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '1_taks1'))
 from time_series_preprocessor import TimeSeriesPreprocessor
-
+from time_series_forecaster import TimeSeriesForecaster
 
 # Paths to data files
 context_path = os.path.join('data', 'context_data.csv')
@@ -31,11 +31,11 @@ context_data = pd.read_csv(context_path)
 evaluation_data = pd.read_csv(evaluation_path)
 
 # Filter out columns with 'sin' or 'cos' in their names
-# sine_cosine_cols = [col for col in context_data.columns if 'sin' in col.lower() or 'cos' in col.lower()]
-# if sine_cosine_cols:
-#     print(f"Excluding sine/cosine columns from evaluation: {sine_cosine_cols}")
-#     context_data = context_data.drop(columns=sine_cosine_cols)
-#     evaluation_data = evaluation_data.drop(columns=sine_cosine_cols)
+sine_cosine_cols = [col for col in context_data.columns if 'sin' in col.lower() or 'cos' in col.lower()]
+if sine_cosine_cols:
+    print(f"Excluding sine/cosine columns from evaluation: {sine_cosine_cols}")
+    context_data = context_data.drop(columns=sine_cosine_cols)
+    evaluation_data = evaluation_data.drop(columns=sine_cosine_cols)
 
 # Load preprocessing parameters
 preprocessor = TimeSeriesPreprocessor()
@@ -43,8 +43,8 @@ preprocessor._load_parameters(params_path)
 print("Preprocessing parameters loaded.")
 
 # Configuration
-context_length = 12  # Default context window for TimeMoE
-prediction_length = min(208, len(evaluation_data))  # How many steps to predict
+context_length = 1173  # Default context window for TimeMoE
+prediction_length = 30 # How many steps to predict
 target_col = 'target'  # Column name for the target values
 
 # Create sequences for the model
@@ -65,31 +65,9 @@ model = AutoModelForCausalLM.from_pretrained(
     trust_remote_code=True,
 )
 
-# Generate forecasts using simple autoregressive approach instead of model.generate
-print(f"Generating forecast for {prediction_length} steps ahead...")
-with torch.no_grad():
-    # Start with input sequence
-    working_seq = input_sequence.clone()
-    predictions = []
-    
-    # Generate step by step
-    for i in range(prediction_length):
-        # Forward pass to get next time step prediction
-        output = model(working_seq)
-        next_value = output.logits[0, -1]  # Take the last predicted value
-        
-        # Add to predictions
-        predictions.append(next_value.item())
-        
-        # Update working sequence (remove oldest, add newest)
-        working_seq = torch.cat([working_seq[:, 1:], next_value.unsqueeze(0).unsqueeze(1)], dim=1)
-        
-        # Progress update
-        if i % 20 == 0:
-            print(f"  Generated {i}/{prediction_length} steps...")
-    
-# Convert list to numpy array
-predictions = np.array(predictions)
+# forecast
+forecaster = TimeSeriesForecaster(model, input_sequence, prediction_length)
+predictions = forecaster.generate_forecast(method='autoregressive')
 
 # Get actual values for comparison
 actuals = evaluation_data[target_col].values[:prediction_length]
@@ -129,3 +107,4 @@ output_path = os.path.join('3_task3', 'forecast_plot.png')
 plt.savefig(output_path)
 print(f"\nPlot saved to {output_path}")
 plt.close()
+
