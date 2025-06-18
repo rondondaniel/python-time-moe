@@ -34,25 +34,22 @@ def main():
         processed_df.to_csv('data/processed_data.csv', index=False)
         print(f"Saved processed data to data/processed_data.csv")
 
-        # Split the data into train, validation, and test sets
-        train_df, val_df, test_df = splitter.split_for_training(processed_df)
+        # Split the data into train, context for fine-tuning, and evaluation for fine-tuning sets
+        train_df, context_ft_df, evaluation_ft_df = splitter.split_for_training(processed_df)
         print(f"Train set: {len(train_df)} samples")
-        print(f"Validation set: {len(val_df)} samples")
-        print(f"Test set: {len(test_df)} samples")
+        print(f"Context for FT set: {len(context_ft_df)} samples")
+        print(f"Evaluation for FT set: {len(evaluation_ft_df)} samples")
 
         preprocessor.to_jsonl(train_df, 'data/train.jsonl')
         
         # Split the data into context and evaluation sets
         context_df, evaluation_df = splitter.split_for_evaluation(processed_df)
-        print(f"Context set: {len(context_df)} samples")
-        print(f"Evaluation set: {len(evaluation_df)} samples")
-        
-        preprocessor.to_jsonl(context_df, 'data/train.jsonl')
+        print(f"Context for Zero-shot set: {len(context_df)} samples")
+        print(f"Evaluation for Zero-shot set: {len(evaluation_df)} samples")
         
         print("\nPreprocessing complete!")
-        print("Note: For model training, load the processed data from 'data/train.csv', 'data/val.csv', 'data/test.csv'")
-        print("Note: For model evaluation, load the processed data from 'data/context.csv', 'data/evaluation.csv'")
-        print("The preprocessing parameters are saved in 'data/preprocessing_params.npy'")
+        print("Note: For model Fine-Tuning load the processed data from 'data/train.jsonl', 'data/context_ft.csv', 'data/evaluation_ft.csv'")
+        print("Note: For model Zero-shot evaluation, load the processed data from 'data/context.csv', 'data/evaluation.csv'")
     else:
         print("\nPreprocessing failed. Please check the errors above.")
 

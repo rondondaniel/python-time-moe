@@ -28,14 +28,14 @@ class TimeSeriesSplitter:
         
         # Split chronologically using stratification method
         train_df = df.iloc[:train_size].copy()
-        val_df = df.iloc[train_size:train_size+val_size].copy()
-        test_df = df.iloc[train_size+val_size:].copy()
+        context_df = df.iloc[train_size:train_size+val_size].copy()
+        evaluation_df = df.iloc[train_size+val_size:].copy()
         
         train_df.to_csv('data/train_data.csv', index=False)
-        val_df.to_csv('data/val_data.csv', index=False)
-        test_df.to_csv('data/test_data.csv', index=False)
+        context_df.to_csv('data/context_ft_data.csv', index=False)
+        evaluation_df.to_csv('data/evaluation_ft_data.csv', index=False)
         
-        return train_df, val_df, test_df
+        return train_df, context_df, evaluation_df
 
     def _context_evaluation_split_time_series(self, df: DataFrame, context_ratio=0.8):
         """Split time series data into train, validation, and test sets chronologically.

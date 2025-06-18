@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import json
 import os
 
 class TimeSeriesPreprocessor:
@@ -152,37 +153,21 @@ class TimeSeriesPreprocessor:
         self.flag_features = params['flag_features']
     
     def to_jsonl(self, df, output_path, column='target'):
-        """Convert processed data to JSONL format for TimeMoE model training.
-        
+        """Convert a pandas DataFrame to a JSONL file format required for fine-tuning time-MOE model.
+    
         Args:
-            df (pd.DataFrame): Processed DataFrame containing the time series data.
-            output_path (str): Path to save the JSONL output file.
-            column (str): Column name to use for the sequence values (default: 'target').
-                     
-        Returns:
-            bool: True if conversion was successful, False otherwise.
+            df (pandas.DataFrame): Input DataFrame containing time series data
+            output_path (str): Path to save the output JSONL file
         """
-        import json
+        # Remove non-numeric columns to ensure only numeric data in sequence
+        numeric_df = df.select_dtypes(include=['number'])
+    
+        # Open the output file for writing
+        with open(output_path, 'w') as f:
+            # For each row in the DataFrame
+            for _, row in numeric_df.iterrows():
+                # Create a dictionary with a 'sequence' key containing the row values as a list
+                json_obj = {"sequence": row.tolist()}
+                # Write the JSON object as a line in the output file
+                f.write(json.dumps(json_obj) + '\n')
         
-        if column not in df.columns:
-            print(f"Error: Column '{column}' not found in the DataFrame.")
-            return False
-        
-        # Make sure output directory exists
-        output_dir = os.path.dirname(output_path)
-        if output_dir:
-            os.makedirs(output_dir, exist_ok=True)
-            
-        try:
-            with open(output_path, 'w') as f:
-                # Create a single sequence from the target column
-                sequence = df[column].values.tolist()
-                f.write(json.dumps({"sequence": sequence}) + "\n")
-                print(f"Created sequence of length {len(sequence)}")
-                    
-            print(f"Successfully converted data to JSONL format and saved to {output_path}")
-            return True
-            
-        except Exception as e:
-            print(f"Error saving to JSONL: {e}")
-            return False
