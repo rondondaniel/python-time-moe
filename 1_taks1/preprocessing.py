@@ -4,6 +4,7 @@ from time_series_preprocessor import TimeSeriesPreprocessor
 
 
 def read_data(data_path):
+    """Read the data from a CSV file."""
     try:
         df = pd.read_csv(data_path)
     except FileNotFoundError:
@@ -18,6 +19,7 @@ def read_data(data_path):
     return df
 
 def main():
+    """Main function to preprocess the data."""
     data_path = "data/data.csv"
     
     df = read_data(data_path)

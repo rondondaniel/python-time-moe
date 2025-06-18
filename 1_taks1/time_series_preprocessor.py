@@ -33,10 +33,8 @@ class TimeSeriesPreprocessor:
         """
         df_copy = df.copy()
         
-        # Debug check
         print(f"Date column '{self.date_col}' dtype before conversion: {df_copy[self.date_col].dtype}")
         
-        # Ensure date column is datetime
         if not pd.api.types.is_datetime64_any_dtype(df_copy[self.date_col]):
             try:
                 df_copy[self.date_col] = pd.to_datetime(df_copy[self.date_col])
@@ -71,7 +69,6 @@ class TimeSeriesPreprocessor:
         Returns:
             pd.DataFrame: Transformed dataframe.
         """
-        # Extract date features
         df_processed = self._extract_date_features(df)
         
         if df_processed is None:
@@ -104,7 +101,6 @@ class TimeSeriesPreprocessor:
         Returns:
             pd.DataFrame: Transformed dataframe.
         """
-        # Extract date features
         df_processed = self._extract_date_features(df)
         
         if df_processed is None:
@@ -126,7 +122,6 @@ class TimeSeriesPreprocessor:
         Args:
             output_dir (str): Directory to save parameters.
         """
-        # Create output directory if it doesn't exist
         os.makedirs(output_dir, exist_ok=True)
         
         params = {
@@ -159,15 +154,10 @@ class TimeSeriesPreprocessor:
             df (pandas.DataFrame): Input DataFrame containing time series data
             output_path (str): Path to save the output JSONL file
         """
-        # Remove non-numeric columns to ensure only numeric data in sequence
         numeric_df = df.select_dtypes(include=['number'])
     
-        # Open the output file for writing
         with open(output_path, 'w') as f:
-            # For each row in the DataFrame
             for _, row in numeric_df.iterrows():
-                # Create a dictionary with a 'sequence' key containing the row values as a list
                 json_obj = {"sequence": row.tolist()}
-                # Write the JSON object as a line in the output file
                 f.write(json.dumps(json_obj) + '\n')
         

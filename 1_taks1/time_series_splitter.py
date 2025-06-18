@@ -5,9 +5,11 @@ class TimeSeriesSplitter:
         pass
     
     def split_for_training(self, df: DataFrame, train_ratio=0.7, context_ratio=0.15):
+        """ A getter method for the train_test_split_time_series method."""
         return self._train_test_split_time_series(df, train_ratio, context_ratio)
     
     def split_for_evaluation(self, df: DataFrame, context_ratio=0.8):
+        """ A getter method for the context_evaluation_split_time_series method."""
         return self._context_evaluation_split_time_series(df, context_ratio)
 
     def _train_test_split_time_series(self, df: DataFrame, train_ratio=0.7, context_ratio=0.15):
