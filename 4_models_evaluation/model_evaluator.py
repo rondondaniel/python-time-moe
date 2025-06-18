@@ -121,10 +121,10 @@ class TimeMoeEvaluator:
         plt.tight_layout()
         
         # Make sure the directory exists
-        os.makedirs('5_task5', exist_ok=True)
+        os.makedirs('5_models_comparison', exist_ok=True)
         
         # Save the plot
-        output_path = os.path.join('5_task5', f'forecast_plot_{model_name}_{prediction_length}_days.png')
+        output_path = os.path.join('5_models_comparison', f'forecast_plot_{model_name}_{prediction_length}_days.png')
         plt.savefig(output_path)
         print(f"\nPlot saved to {output_path}")
         plt.close()
