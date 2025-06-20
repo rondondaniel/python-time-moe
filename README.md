@@ -48,13 +48,13 @@ python-time-moe/
 │   └── plots/                 # Generated EDA plots
 ├── 2_preprocessing/           # Data preprocessing modules
 │   ├── preprocessing.py       # Main preprocessing script
-│   ├── time_series_preprocessor.py   # Feature engineering and standardization
-│   └── time_series_splitter.py       # Dataset splitting for training/evaluation
-├── 3_model_finetuned/         # Fine-tuned model files (if applicable)
+│   ├── time_series_preprocessor.py   # Class for feature engineering and standardization
+│   └── time_series_splitter.py       # Class for dataset splitting for training/evaluation
+├── 3_model_finetuned/         # Fine-tuned model files
 ├── 4_models_evaluation/       # Model evaluation modules
 │   ├── run_eval.py            # Main evaluation script
-│   ├── model_evaluator.py     # Model evaluation class
-│   └── time_series_forecaster.py     # Forecasting functionality
+│   ├── model_evaluator.py     # Class for model evaluation
+│   └── time_series_forecaster.py     # Class for forecasting functionality
 ├── 5_models_comparison/       # Comparison results and visualization
 │   ├── forecast plots         # Generated forecast visualizations
 │   └── model_evaluation_metrics.md    # Metric comparison tables
